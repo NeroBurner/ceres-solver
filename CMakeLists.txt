@@ -202,7 +202,11 @@ unset(CERES_COMPILE_OPTIONS)
 
 # Eigen.
 hunter_add_package(Eigen)
-find_package(Eigen3 REQUIRED)
+# prefer Eigen config file
+find_package(Eigen3 CONFIG)
+if (NOT Eigen3_FOUND)
+  find_package(Eigen3)
+endif()
 if (EIGEN3_FOUND)
     if (EIGEN3_VERSION_STRING VERSION_LESS 3.1.0)
     message(FATAL_ERROR "-- Ceres requires Eigen version >= 3.1.0 in order "
