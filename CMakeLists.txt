@@ -276,6 +276,9 @@ if (SUITESPARSE)
   # By default, if SuiteSparse and all dependencies are found, Ceres is
   # built with SuiteSparse support.
 
+  # add SuiteSparse hunter package
+  hunter_add_package(SuiteSparse)
+
   # Check for SuiteSparse and dependencies.
   find_package(SuiteSparse CONFIG)
   if (SuiteSparse_FOUND)
