@@ -246,6 +246,9 @@ endif (EIGEN3_FOUND)
 
 # LAPACK (& BLAS).
 if (LAPACK)
+  # add SuiteSparse hunter package
+  hunter_add_package(LAPACK)
+
   find_package(LAPACK CONFIG)
   if (LAPACK_FOUND)
     get_target_property(lapack_location lapack LOCATION)
