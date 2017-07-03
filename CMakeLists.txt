@@ -208,11 +208,11 @@ if (NOT Eigen3_FOUND)
   find_package(Eigen3)
 endif()
 if (EIGEN3_FOUND)
-    if (EIGEN3_VERSION_STRING VERSION_LESS 3.1.0)
+  if (EIGEN3_VERSION_STRING VERSION_LESS 3.1.0)
     message(FATAL_ERROR "-- Ceres requires Eigen version >= 3.1.0 in order "
       "that Eigen/SparseCore be available, detected version of Eigen is: "
       "${EIGEN3_VERSION_STRING}")
-  endif (EIGEN3_VERSION VERSION_LESS 3.1.0)
+  endif ()
 
   message("-- Found Eigen version ${EIGEN_VERSION_STRING}: ${EIGEN3_INCLUDE_DIRS}")
   # Ensure that only MPL2 licensed code is part of the default build.
