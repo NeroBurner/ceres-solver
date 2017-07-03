@@ -245,10 +245,11 @@ endif (BUILD_SHARED_LIBS)
 
 # link Eigen3 if target exists, otherwise use legacy variable
 # Eigen3Config.cmake introduced with Eigen 3.3.1
+# ceres/jet.h uses Eigen/Core, therefore Eigen needs to be public
 if (TARGET Eigen3::Eigen)
-  target_link_libraries(ceres Eigen3::Eigen)
+  target_link_libraries(ceres PUBLIC Eigen3::Eigen)
 else()
-  target_include_directories(ceres SYSTEM PRIVATE
+  target_include_directories(ceres SYSTEM PUBLIC
     $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIRS}>)
 endif()
 
