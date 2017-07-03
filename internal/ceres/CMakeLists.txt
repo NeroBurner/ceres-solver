@@ -142,11 +142,18 @@ if (NOT MINIGLOG AND GLOG_FOUND)
   endif()
 endif (NOT MINIGLOG AND GLOG_FOUND)
 
-if (SUITESPARSE AND SUITESPARSE_FOUND)
+if (SUITESPARSE AND SuiteSparse_FOUND)
   # Define version information for use in Solver::FullReport.
-  add_definitions(-DCERES_SUITESPARSE_VERSION="${SUITESPARSE_VERSION}")
-  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${SUITESPARSE_LIBRARIES})
-endif (SUITESPARSE AND SUITESPARSE_FOUND)
+  add_definitions(-DCERES_SUITESPARSE_VERSION="${SuiteSparse_VERSION}")
+  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES
+    SuiteSparse::spqr
+    SuiteSparse::cholmod
+    SuiteSparse::ccolamd
+    SuiteSparse::camd
+    SuiteSparse::colamd
+    SuiteSparse::amd
+  )
+endif ()
 
 if (CXSPARSE AND CXSPARSE_FOUND)
   # Define version information for use in Solver::FullReport.
@@ -381,11 +388,11 @@ if (BUILD_TESTING AND GFLAGS)
 
   # TODO(sameeragarwal): This test should ultimately be made
   # independent of SuiteSparse.
-  if (SUITESPARSE AND SUITESPARSE_FOUND)
+  if (SUITESPARSE AND SuiteSparse_FOUND)
     ceres_test(compressed_col_sparse_matrix_utils)
     target_link_libraries(compressed_col_sparse_matrix_utils_test
-                          ${SUITESPARSE_LIBRARIES})
-  endif (SUITESPARSE AND SUITESPARSE_FOUND)
+                          ${SuiteSparse_LIBRARIES})
+  endif ()
 
   ceres_test(symmetric_linear_solver)
   ceres_test(triplet_sparse_matrix)

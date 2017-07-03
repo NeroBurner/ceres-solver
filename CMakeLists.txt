@@ -277,8 +277,8 @@ if (SUITESPARSE)
   # built with SuiteSparse support.
 
   # Check for SuiteSparse and dependencies.
-  find_package(SuiteSparse)
-  if (SUITESPARSE_FOUND)
+  find_package(SuiteSparse CONFIG)
+  if (SuiteSparse_FOUND)
     # On Ubuntu the system install of SuiteSparse (v3.4.0) up to at least
     # Ubuntu 13.10 cannot be used to link shared libraries.
     if (BUILD_SHARED_LIBS AND
@@ -292,20 +292,20 @@ if (SUITESPARSE)
         "(libsuitesparse-dev) and perform a source install of SuiteSparse "
         "(we recommend that you use the latest version), "
         "see http://ceres-solver.org/building.html for more information.")
-    endif (BUILD_SHARED_LIBS AND
-      SUITESPARSE_IS_BROKEN_SHARED_LINKING_UBUNTU_SYSTEM_VERSION)
+    endif ()
 
     # By default, if all of SuiteSparse's dependencies are found, Ceres is
     # built with SuiteSparse support.
-    message("-- Found SuiteSparse ${SUITESPARSE_VERSION}, "
+
+    message("-- Found SuiteSparse ${SuiteSparse_VERSION}, "
             "building with SuiteSparse.")
-  else (SUITESPARSE_FOUND)
+  else ()
     # Disable use of SuiteSparse if it cannot be found and continue.
     message("-- Did not find all SuiteSparse dependencies, disabling "
       "SuiteSparse support.")
     update_cache_variable(SUITESPARSE OFF)
     list(APPEND CERES_COMPILE_OPTIONS CERES_NO_SUITESPARSE)
-  endif (SUITESPARSE_FOUND)
+  endif ()
 else (SUITESPARSE)
   message("-- Building without SuiteSparse.")
   list(APPEND CERES_COMPILE_OPTIONS CERES_NO_SUITESPARSE)
@@ -517,10 +517,6 @@ endif(CXX11)
 # used by clients after find_package(Ceres) does not identify Eigen as
 # as system headers.
 #include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
-
-if (SUITESPARSE)
-  include_directories(${SUITESPARSE_INCLUDE_DIRS})
-endif (SUITESPARSE)
 
 if (CXSPARSE)
   include_directories(${CXSPARSE_INCLUDE_DIRS})
