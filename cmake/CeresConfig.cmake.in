@@ -333,6 +333,11 @@ if (TARGET ${CERES_LIBRARIES} AND
   endif()
 endif()
 
+set(CERES_USES_SUITESPARSE @SUITESPARSE@)
+if (CERES_USES_SUITESPARSE) # SuiteSparse
+  find_package(SuiteSparse CONFIG REQUIRED)
+endif()
+
 # Set legacy include directories variable for backwards compatibility.
 set(CERES_INCLUDES ${CERES_INCLUDE_DIRS})
 
