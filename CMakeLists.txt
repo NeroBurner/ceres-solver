@@ -202,13 +202,17 @@ unset(CERES_COMPILE_OPTIONS)
 
 # Eigen.
 hunter_add_package(Eigen)
-find_package(Eigen3 REQUIRED)
+# prefer Eigen config file
+find_package(Eigen3 CONFIG)
+if (NOT Eigen3_FOUND)
+  find_package(Eigen3)
+endif()
 if (EIGEN3_FOUND)
-    if (EIGEN3_VERSION_STRING VERSION_LESS 3.1.0)
+  if (EIGEN3_VERSION_STRING VERSION_LESS 3.1.0)
     message(FATAL_ERROR "-- Ceres requires Eigen version >= 3.1.0 in order "
       "that Eigen/SparseCore be available, detected version of Eigen is: "
       "${EIGEN3_VERSION_STRING}")
-  endif (EIGEN3_VERSION VERSION_LESS 3.1.0)
+  endif ()
 
   message("-- Found Eigen version ${EIGEN_VERSION_STRING}: ${EIGEN3_INCLUDE_DIRS}")
   # Ensure that only MPL2 licensed code is part of the default build.
@@ -242,24 +246,21 @@ endif (EIGEN3_FOUND)
 
 # LAPACK (& BLAS).
 if (LAPACK)
-  find_package(LAPACK QUIET)
+  # add SuiteSparse hunter package
+  hunter_add_package(LAPACK)
+
+  find_package(LAPACK CONFIG)
   if (LAPACK_FOUND)
-    message("-- Found LAPACK library: ${LAPACK_LIBRARIES}")
+    get_target_property(lapack_location lapack LOCATION)
+    message("-- Found LAPACK library: ${lapack_location}")
   else (LAPACK_FOUND)
     message("-- Did not find LAPACK library, disabling LAPACK support.")
   endif (LAPACK_FOUND)
 
-  find_package(BLAS QUIET)
-  if (BLAS_FOUND)
-    message("-- Found BLAS library: ${BLAS_LIBRARIES}")
-  else (BLAS_FOUND)
-    message("-- Did not find BLAS library, disabling LAPACK support.")
-  endif (BLAS_FOUND)
-
-  if (NOT (LAPACK_FOUND AND BLAS_FOUND))
+  if (NOT (TARGET lapack AND TARGET blas))
     update_cache_variable(LAPACK OFF)
     list(APPEND CERES_COMPILE_OPTIONS CERES_NO_LAPACK)
-  endif (NOT (LAPACK_FOUND AND BLAS_FOUND))
+  endif ()
 else (LAPACK)
   message("-- Building without LAPACK.")
   list(APPEND CERES_COMPILE_OPTIONS CERES_NO_LAPACK)
@@ -278,9 +279,12 @@ if (SUITESPARSE)
   # By default, if SuiteSparse and all dependencies are found, Ceres is
   # built with SuiteSparse support.
 
+  # add SuiteSparse hunter package
+  hunter_add_package(SuiteSparse)
+
   # Check for SuiteSparse and dependencies.
-  find_package(SuiteSparse)
-  if (SUITESPARSE_FOUND)
+  find_package(SuiteSparse CONFIG)
+  if (SuiteSparse_FOUND)
     # On Ubuntu the system install of SuiteSparse (v3.4.0) up to at least
     # Ubuntu 13.10 cannot be used to link shared libraries.
     if (BUILD_SHARED_LIBS AND
@@ -294,20 +298,20 @@ if (SUITESPARSE)
         "(libsuitesparse-dev) and perform a source install of SuiteSparse "
         "(we recommend that you use the latest version), "
         "see http://ceres-solver.org/building.html for more information.")
-    endif (BUILD_SHARED_LIBS AND
-      SUITESPARSE_IS_BROKEN_SHARED_LINKING_UBUNTU_SYSTEM_VERSION)
+    endif ()
 
     # By default, if all of SuiteSparse's dependencies are found, Ceres is
     # built with SuiteSparse support.
-    message("-- Found SuiteSparse ${SUITESPARSE_VERSION}, "
+
+    message("-- Found SuiteSparse ${SuiteSparse_VERSION}, "
             "building with SuiteSparse.")
-  else (SUITESPARSE_FOUND)
+  else ()
     # Disable use of SuiteSparse if it cannot be found and continue.
     message("-- Did not find all SuiteSparse dependencies, disabling "
       "SuiteSparse support.")
     update_cache_variable(SUITESPARSE OFF)
     list(APPEND CERES_COMPILE_OPTIONS CERES_NO_SUITESPARSE)
-  endif (SUITESPARSE_FOUND)
+  endif ()
 else (SUITESPARSE)
   message("-- Building without SuiteSparse.")
   list(APPEND CERES_COMPILE_OPTIONS CERES_NO_SUITESPARSE)
@@ -519,10 +523,6 @@ endif(CXX11)
 # used by clients after find_package(Ceres) does not identify Eigen as
 # as system headers.
 #include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
-
-if (SUITESPARSE)
-  include_directories(${SUITESPARSE_INCLUDE_DIRS})
-endif (SUITESPARSE)
 
 if (CXSPARSE)
   include_directories(${CXSPARSE_INCLUDE_DIRS})

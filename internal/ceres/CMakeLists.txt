@@ -142,11 +142,18 @@ if (NOT MINIGLOG AND GLOG_FOUND)
   endif()
 endif (NOT MINIGLOG AND GLOG_FOUND)
 
-if (SUITESPARSE AND SUITESPARSE_FOUND)
+if (SUITESPARSE AND SuiteSparse_FOUND)
   # Define version information for use in Solver::FullReport.
-  add_definitions(-DCERES_SUITESPARSE_VERSION="${SUITESPARSE_VERSION}")
-  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${SUITESPARSE_LIBRARIES})
-endif (SUITESPARSE AND SUITESPARSE_FOUND)
+  add_definitions(-DCERES_SUITESPARSE_VERSION="${SuiteSparse_VERSION}")
+  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES
+    SuiteSparse::spqr
+    SuiteSparse::cholmod
+    SuiteSparse::ccolamd
+    SuiteSparse::camd
+    SuiteSparse::colamd
+    SuiteSparse::amd
+  )
+endif ()
 
 if (CXSPARSE AND CXSPARSE_FOUND)
   # Define version information for use in Solver::FullReport.
@@ -154,10 +161,10 @@ if (CXSPARSE AND CXSPARSE_FOUND)
   list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${CXSPARSE_LIBRARIES})
 endif (CXSPARSE AND CXSPARSE_FOUND)
 
-if (BLAS_FOUND AND LAPACK_FOUND)
-  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${LAPACK_LIBRARIES})
-  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES ${BLAS_LIBRARIES})
-endif (BLAS_FOUND AND LAPACK_FOUND)
+if (TARGET blas AND TARGET lapack)
+  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES lapack)
+  list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES blas)
+endif ()
 
 if (OPENMP_FOUND)
   # OpenMP support in Clang requires a non-GNU OpenMP library.
@@ -245,10 +252,11 @@ endif (BUILD_SHARED_LIBS)
 
 # link Eigen3 if target exists, otherwise use legacy variable
 # Eigen3Config.cmake introduced with Eigen 3.3.1
+# ceres/jet.h uses Eigen/Core, therefore Eigen needs to be public
 if (TARGET Eigen3::Eigen)
-  target_link_libraries(ceres Eigen3::Eigen)
+  target_link_libraries(ceres PUBLIC Eigen3::Eigen)
 else()
-  target_include_directories(ceres SYSTEM PRIVATE
+  target_include_directories(ceres SYSTEM PUBLIC
     $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIRS}>)
 endif()
 
@@ -380,11 +388,11 @@ if (BUILD_TESTING AND GFLAGS)
 
   # TODO(sameeragarwal): This test should ultimately be made
   # independent of SuiteSparse.
-  if (SUITESPARSE AND SUITESPARSE_FOUND)
+  if (SUITESPARSE AND SuiteSparse_FOUND)
     ceres_test(compressed_col_sparse_matrix_utils)
     target_link_libraries(compressed_col_sparse_matrix_utils_test
-                          ${SUITESPARSE_LIBRARIES})
-  endif (SUITESPARSE AND SUITESPARSE_FOUND)
+                          ${SuiteSparse_LIBRARIES})
+  endif ()
 
   ceres_test(symmetric_linear_solver)
   ceres_test(triplet_sparse_matrix)
