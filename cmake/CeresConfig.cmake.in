@@ -215,7 +215,7 @@ if (EIGEN3_FOUND)
     # specified version. However, only version = is supported. Improve
     # usability by explaining why we don't accept non-exact version matching.
     ceres_report_not_found("Found Eigen dependency, but the version of Eigen "
-      "found (${EIGEN_VERSION}) does not exactly match the version of Eigen "
+      "found (${EIGEN3_VERSION_STRING}) does not exactly match the version of Eigen "
       "Ceres was compiled with (${CERES_EIGEN_VERSION}). This can cause subtle "
       "bugs by triggering violations of the One Definition Rule. See the "
       "Wikipedia article http://en.wikipedia.org/wiki/One_Definition_Rule "
