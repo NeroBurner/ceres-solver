@@ -247,7 +247,7 @@ else (BUILD_SHARED_LIBS)
   set(CERES_LIBRARY_DEPENDENCIES
         ${CERES_LIBRARY_PUBLIC_DEPENDENCIES}
         ${CERES_LIBRARY_PRIVATE_DEPENDENCIES})
-  target_link_libraries(ceres ${CERES_LIBRARY_DEPENDENCIES})
+  target_link_libraries(ceres PUBLIC ${CERES_LIBRARY_DEPENDENCIES})
 endif (BUILD_SHARED_LIBS)
 
 # link Eigen3 if target exists, otherwise use legacy variable
@@ -263,9 +263,9 @@ endif()
 if (NOT MINIGLOG)
   # link to glog for logging
   if (TARGET glog::glog)
-    target_link_libraries(ceres glog::glog)
+    target_link_libraries(ceres PRIVATE glog::glog)
   elseif (TARGET glog)
-    target_link_libraries(ceres glog)
+    target_link_libraries(ceres PRIVATE glog)
   else()
     target_include_directories(ceres PRIVATE
       $<BUILD_INTERFACE:${GLOG_INCLUDE_DIRS}>)
@@ -305,16 +305,16 @@ if (BUILD_TESTING AND GFLAGS)
   if (MINIGLOG)
     # When using miniglog, it is compiled into Ceres, thus Ceres becomes
     # the library against which other libraries should link for logging.
-    target_link_libraries(gtest ${GFLAGS_LIBRARIES} ceres)
-    target_link_libraries(test_util ceres gtest)
+    target_link_libraries(gtest PUBLIC ${GFLAGS_LIBRARIES} ceres)
+    target_link_libraries(test_util PUBLIC ceres gtest)
   else (MINIGLOG)
-    target_link_libraries(gtest ${GFLAGS_LIBRARIES} ${GLOG_LIBRARIES})
-    target_link_libraries(test_util ceres gtest ${GLOG_LIBRARIES})
+    target_link_libraries(gtest PUBLIC ${GFLAGS_LIBRARIES} ${GLOG_LIBRARIES})
+    target_link_libraries(test_util PUBLIC ceres gtest ${GLOG_LIBRARIES})
   endif (MINIGLOG)
 
   macro (CERES_TEST NAME)
     add_executable(${NAME}_test ${NAME}_test.cc)
-    target_link_libraries(${NAME}_test test_util ceres gtest)
+    target_link_libraries(${NAME}_test PRIVATE test_util ceres gtest)
     if (BUILD_SHARED_LIBS)
       # Define gtest-specific shared library flags for linking.
       append_target_property(${NAME}_test COMPILE_DEFINITIONS
@@ -390,7 +390,7 @@ if (BUILD_TESTING AND GFLAGS)
   # independent of SuiteSparse.
   if (SUITESPARSE AND SuiteSparse_FOUND)
     ceres_test(compressed_col_sparse_matrix_utils)
-    target_link_libraries(compressed_col_sparse_matrix_utils_test
+    target_link_libraries(compressed_col_sparse_matrix_utils_test PRIVATE
                           ${SuiteSparse_LIBRARIES})
   endif ()
 
