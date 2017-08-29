@@ -264,27 +264,14 @@ else (CERES_USES_MINIGLOG)
     # re-exported.  Without this, the 'gflags-shared' target name which is
     # present in CERES_LIBRARIES in this case would not be defined, and so
     # CMake will assume it is a library name (which it is not) and fail to link.
-    #
-    # Append the locations of gflags when Ceres was built to the search path
-    # hints.
-    set(GFLAGS_WAS_BUILT_WITH_CMAKE @FOUND_INSTALLED_GFLAGS_CMAKE_CONFIGURATION@)
-    if (GFLAGS_WAS_BUILT_WITH_CMAKE)
-      set(gflags_DIR @gflags_DIR@)
-      set(GFLAGS_PREFER_EXPORTED_GFLAGS_CMAKE_CONFIGURATION TRUE)
-    else()
-      list(APPEND GFLAGS_INCLUDE_DIR_HINTS @GFLAGS_INCLUDE_DIR@)
-      get_filename_component(CERES_BUILD_GFLAGS_LIBRARY_DIR @GFLAGS_LIBRARY@ PATH)
-      list(APPEND GFLAGS_LIBRARY_DIR_HINTS ${CERES_BUILD_GFLAGS_LIBRARY_DIR})
-    endif()
 
     # Search quietly s/t we control the timing of the error message if not found.
-    find_package(Gflags QUIET)
+    find_package(Gflags CONFIG QUIET)
     if (GFLAGS_FOUND)
       message(STATUS "Found required Ceres dependency: gflags")
     else()
       ceres_report_not_found("Missing required Ceres "
-        "dependency: gflags. Searched using GFLAGS_INCLUDE_DIR_HINTS: "
-        "${GFLAGS_INCLUDE_DIR_HINTS} and gflags_DIR: ${gflags_DIR}.")
+        "dependency: gflags.")
     endif()
     list(APPEND CERES_INCLUDE_DIRS ${GFLAGS_INCLUDE_DIR_HINTS})
   endif()
