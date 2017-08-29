@@ -203,8 +203,6 @@ set(CERES_VERSION @CERES_VERSION@ )
 # Eigen.
 # Flag set during configuration and build of Ceres.
 set(CERES_EIGEN_VERSION @EIGEN3_VERSION_STRING@)
-# Append the locations of Eigen when Ceres was built to the search path hints.
-list(APPEND EIGEN3_INCLUDE_DIR_HINTS @EIGEN3_INCLUDE_DIR@)
 # Search quietly to control the timing of the error message if not found. The
 # search should be for an exact match, but for usability reasons do a soft
 # match and reject with an explanation below.
