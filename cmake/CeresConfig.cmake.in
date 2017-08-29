@@ -311,6 +311,18 @@ if (CERES_USES_SUITESPARSE) # SuiteSparse
   find_package(SuiteSparse CONFIG REQUIRED)
 endif()
 
+# OpenMP.
+# Flag set during configuration and build of Ceres.
+set(CERES_USES_OPENMP @OPENMP@)
+if (CERES_USES_OPENMP)
+  if (UNIX OR MINGW)
+    # At least on Linux, we need pthreads to be enabled for mutex to
+    # compile.  This may not work on Windows or Android.
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+  endif ()
+endif ()
+
 # Set legacy include directories variable for backwards compatibility.
 set(CERES_INCLUDES ${CERES_INCLUDE_DIRS})
 
