@@ -431,13 +431,14 @@ if (OPENMP)
     message("-- Building with OpenMP.")
     list(APPEND CERES_COMPILE_OPTIONS CERES_USE_OPENMP)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    if (UNIX)
+    if (UNIX OR MINGW)
       # At least on Linux, we need pthreads to be enabled for mutex to
       # compile.  This may not work on Windows or Android.
+      set(THREADS_PREFER_PTHREAD_FLAG ON)
       find_package(Threads REQUIRED)
       list(APPEND CERES_COMPILE_OPTIONS CERES_HAVE_PTHREAD)
       list(APPEND CERES_COMPILE_OPTIONS CERES_HAVE_RWLOCK)
-    endif (UNIX)
+    endif ()
   else (OPENMP_FOUND)
     message("-- Failed to find OpenMP, disabling. This is expected on "
       "Clang < 3.8, and at least Xcode <= 7.")
