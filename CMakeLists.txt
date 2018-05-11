@@ -37,6 +37,12 @@ if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
 endif()
 
+include(cmake/HunterGate.cmake)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.66.tar.gz"
+    SHA1 "c599029cf00b124c624702739741fead5d4e605d"
+)
+
 project(Ceres C CXX)
 
 # NOTE: The 'generic' CMake variables CMAKE_[SOURCE/BINARY]_DIR should not be
