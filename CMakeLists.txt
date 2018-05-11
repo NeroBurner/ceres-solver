@@ -250,9 +250,11 @@ endif (EIGEN_FOUND)
 
 # LAPACK (& BLAS).
 if (LAPACK)
-  find_package(LAPACK QUIET)
+  hunter_add_package(LAPACK)
+  find_package(LAPACK CONFIG QUIET)
   if (LAPACK_FOUND)
-    message("-- Found LAPACK library: ${LAPACK_LIBRARIES}")
+    get_target_property(lapack_location lapack LOCATION)
+    message("-- Found LAPACK library: ${lapack_location}")
   else (LAPACK_FOUND)
     message("-- Did not find LAPACK library, disabling LAPACK support.")
   endif (LAPACK_FOUND)
