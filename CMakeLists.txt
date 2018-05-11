@@ -209,6 +209,7 @@ endif (IOS)
 unset(CERES_COMPILE_OPTIONS)
 
 # Eigen.
+hunter_add_package(Eigen)
 find_package(Eigen REQUIRED)
 if (EIGEN_FOUND)
   if (EIGEN_VERSION VERSION_LESS 3.1.0)
