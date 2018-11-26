@@ -9,6 +9,11 @@ matrix:
     compiler: gcc
     env: CERES_BUILD_TARGET=LINUX
   - os: linux
+    dist: xenial
+    sudo: required
+    compiler: clang
+    env: CERES_BUILD_TARGET=LINUX
+  - os: linux
     dist: trusty
     sudo: required
     compiler: gcc
